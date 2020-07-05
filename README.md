@@ -19,7 +19,7 @@ HOW TO USE
 7) Press "Start" to begin the file moves.
 
 
-This program was written in Python and the code is available on Github.
+This program was written in Python and the code is available on Github at https://github.com/viniciusbuscacio/cdr-file-organizer
 
 
 LICENSE AND WARRANTY
