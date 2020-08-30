@@ -17,11 +17,11 @@ import sys
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
 import time
 import pkg_resources.py2_warn
+import platform
 
 ###############################################################################################
 
 # Set default app values in case the config file does not exist or contain invalid data
-
 source_folder = "none"
 destination_folder = "none"
 wait_timer = 300
@@ -29,25 +29,33 @@ language = "English"
 start_application_running = False
 wait_timer_as_string = "00:05:00"
 
-
 # Check if the system is Windows or Linux/Mac OS
-if os.name == 'nt':
+if platform.system() == 'Windows':
+    System_OS = "Windows"
+elif platform.system() == 'Linux':
+    System_OS = "Linux"
+elif platform.system() == 'Darwin':
+    System_OS = "MacOS"
+else:
+    System_OS = "MacOS"
+
+
+if System_OS == "Windows":
     #print("Running on Windows")
     config_folder_temp = R"${TEMP}\CDR File Organizer"
     path = R"${TEMP}\CDR File Organizer\config.txt"
+    exp_config_folder_temp = os.path.expandvars(config_folder_temp)
+    config_file = os.path.expandvars(path)
 else:
     #print("Running on Linux/Mac OS")
-    config_folder_temp = path = "~/CDR File Organizer"
+    config_folder_temp = "~/CDR File Organizer"
     path = "~/CDR File Organizer/config.txt"
+    exp_config_folder_temp = os.path.expanduser(config_folder_temp)
+    config_file = os.path.expanduser(path)
 
 # Config File Path - Create folder if does not exist
-exp_config_folder_temp = os.path.expandvars(config_folder_temp)
 if not os.path.exists(exp_config_folder_temp):
     os.makedirs(exp_config_folder_temp)
-
-# Expand the config file path of the user - ${TEMP} (Windows) or /home (Linux/Mac OS)
-exp_path = os.path.expandvars(path)
-config_file = os.path.expandvars(exp_path)
 
 # Check if config file exist
 configFileExist = os.path.exists(config_file)
@@ -80,12 +88,12 @@ if configFileExist == True:
 # Language array - the language configuration is done here
 
 ENGLISH = ['No', 'Yes', 'Start', 'Stop', 'STATUS', 'TIMER', 'Wait timer', 'Progress:', 'Source Folder:',
-           'Destination Folder:', 'Open Log Files', 'Help', 'About', 'Save Configuration', 'Language:',
-           'Start Application \n Running?', 'Apply Language', 'Time until next run:', 'Close',
+           'Destination Folder:', 'Open Log Files', 'Help', 'About', 'Save\nConfiguration', 'Language:',
+           'Start Application \n Running?', 'Apply', 'Time until next run:', 'Close',
            ' - SUCCESS: Moved file ', ' from folder ', ' to folder ', ' - FAILURE: Permission denied to file ',
            ' - FAILURE: File ', ' from folder ', ' was NOT MOVED to folder ',
            ' because file already exist in the destination.', 'About CDR File Organizer',
-           'This is a simple software to organize Cisco CDR Files by Year, Month and day.\n', 'Apply language',
+           'This is a simple software to organize Cisco CDR Files by Year, Month and day.\n', 'Apply',
            'Save your config and restart the application to changes to take effect.', 'Error',
            'Source Folder does not exist.', 'Error', 'Source folder and Destination Folder cannot be the same.',
 		   'Destination Folder does not exist.', 'Saved', 'The configuration was saved successfully.',
@@ -95,11 +103,11 @@ ENGLISH = ['No', 'Yes', 'Start', 'Stop', 'STATUS', 'TIMER', 'Wait timer', 'Progr
 
 PORTUGUESE = ['Não', 'Sim', 'Iniciar', 'Parar', 'STATUS', 'TEMPORIZADOR', 'Tempo de \n espera', 'Progresso:',
               'Pasta de origem:', 'Pasta de destino:', 'Abrir os \n arquivos de log', 'Ajuda', 'Sobre',
-              'Salvar a Configuração', 'Idioma', 'Iniciar o Aplicativo \n Rodando?', 'Aplicar Idioma',
+              'Salvar a Configuração', 'Idioma', 'Iniciar o Aplicativo \n Rodando?', 'Aplicar',
               'Tempo até a \n próxima execução:', 'Fechar', ' - SUCCESSO: Movido o arquivo ', ' da pasta ',
               ' para a pasta ', ' - FALHA: Permissão negada no arquivo ', ' - FALHA: Arquivo ', ' da pasta ',
               ' NÃO FOI MOVIDO para a pasta ', ' porque o arquivo já existe no destino.', 'Sobre o CDR File Organizer',
-              'Este é um pequeno software que organiza arquivos CDR Cisco por ano, mês e dia.\n', 'Aplicar Idioma',
+              'Este é um pequeno software que organiza arquivos CDR Cisco por ano, mês e dia.\n', 'Aplicar',
               'Salve suas configurações e reinicie o aplicativo para as mudanças surtirem efeito.', 'Erro',
               'A Pasta de Origem não existe.', 'Erro', 'A pasta de origem e de destino não podem ser a mesma.',
 			  'A pasta de destino não existe.', 'Salvo', 'A configuração foi salva com sucesso.',
@@ -109,11 +117,11 @@ PORTUGUESE = ['Não', 'Sim', 'Iniciar', 'Parar', 'STATUS', 'TEMPORIZADOR', 'Temp
 
 SPANISH = ['No', 'Si', 'Empezar', 'Detener', 'ESTADO', 'TEMPORIZADOR', 'Tiempo de\n espera', 'Progreso:', 'Carpeta de origen:',
            'Carpeta de destino:', 'Abrir archivos\nde registro', 'Ayuda', 'Acerca de', 'Guardar configuración', 'Idioma:',
-           '¿Iniciar aplicación \n en ejecución?', 'Aplicar idioma', 'Tiempo hasta la\npróxima ejecución:', 'Cerrar',
+           '¿Iniciar aplicación \n en ejecución?', 'Aplicar', 'Tiempo hasta la\npróxima ejecución:', 'Cerrar',
            '- ÉXITO: ​​archivo movido', 'de la carpeta', 'a la carpeta', '- FALLA: Permiso denegado al archivo',
            '- FALLO: El archivo', 'de la carpeta', 'NO SE MOVIÓ a la carpeta',
            'porque el archivo ya existe en el destino', 'Acerca del organizador de archivos CDR',
-           'Este es un software simple para organizar los archivos Cisco CDR por año, mes y día.\n', 'Aplicar idioma',
+           'Este es un software simple para organizar los archivos Cisco CDR por año, mes y día.\n', 'Aplicar',
            'Guarde su configuración y reinicie la aplicación para que los cambios surtan efecto', 'Error',
            'La carpeta de origen no existe', 'Error', 'La carpeta de origen y la carpeta de destino no pueden ser las mismas',
 		   'La carpeta de destino no existe', 'Guardado', 'La configuración se guardó correctamente',
@@ -123,11 +131,11 @@ SPANISH = ['No', 'Si', 'Empezar', 'Detener', 'ESTADO', 'TEMPORIZADOR', 'Tiempo d
 
 ITALIAN = ['No', 'Sì', 'Inizio', 'Fermare', 'STATO', 'TIMER', 'Timer di\nattesa', 'Progresso:', 'Cartella sorgente:',
            "Cartella di\ndestinazione:", "Apri file di registro", "Guida", "Informazioni", "Salva configurazione", "Lingua:",
-           "Avvia applicazione\nin esecuzione?", "Applica lingua", "Tempo fino alla\nprossima esecuzione:", "Chiudi",
+           "Avvia applicazione\nin esecuzione?", "Applica", "Tempo fino alla\nprossima esecuzione:", "Chiudi",
            '- SUCCESSO: file spostato', 'dalla cartella', 'alla cartella', '- GUASTO: Autorizzazione negata al file',
            '- GUASTO: File', 'dalla cartella', 'NON SPOSTATO nella cartella',
            "perché il file esiste già nella destinazione.", "Informazioni su CDR File Organizer",
-           "Questo è un semplice software per organizzare i file Cisco CDR per anno, mese e giorno.\n", "Applica lingua",
+           "Questo è un semplice software per organizzare i file Cisco CDR per anno, mese e giorno.\n", "Applica",
            "Salva la configurazione e riavvia l'applicazione per rendere effettive le modifiche.", "Errore",
            "La cartella di origine non esiste.", "Errore", "La cartella di origine e la cartella di destinazione non possono essere uguali.",
             'La cartella di destinazione non esiste.', 'Salvato', 'La configurazione è stata salvata correttamente.',
@@ -137,11 +145,11 @@ ITALIAN = ['No', 'Sì', 'Inizio', 'Fermare', 'STATO', 'TIMER', 'Timer di\nattesa
 
 FRENCH = ['Non', 'Oui', 'Démarrer', 'Arrêter', 'ÉTAT', 'MINUTERIE', "Minuterie\nd'attente", "Progression:", "Dossier source:",
            'Dossier de destination:', 'Ouvrir les\nfichiers journaux', 'Aide', 'À propos', 'Enregistrer la\nconfiguration', 'Langue:',
-           "Démarrer l'application \n en cours d'exécution?", 'Appliquer la langue', 'Durée avant la\nprochaine exécution:', 'Fermer',
+           "Démarrer l'application \n en cours d'exécution?", 'Appliquer', 'Durée avant la\nprochaine exécution:', 'Fermer',
            '- SUCCÈS: fichier déplacé', 'du dossier', 'vers le dossier', '- ÉCHEC: autorisation refusée de déposer',
            '- ÉCHEC: le fichier', 'du dossier', "n'a PAS ÉTÉ DÉPLACÉ vers le dossier",
            'car le fichier existe déjà dans la destination.', "A propos de l'organisateur de fichiers CDR",
-           "Il s'agit d'un logiciel simple pour organiser les fichiers Cisco CDR par année, mois et jour. \ N", "Appliquer la langue",
+           "Il s'agit d'un logiciel simple pour organiser les fichiers Cisco CDR par année, mois et jour. \ N", "Appliquer",
            "Enregistrez votre configuration et redémarrez l'application pour que les modifications prennent effet.", 'Erreur',
            "Le dossier source n'existe pas.", 'Erreur', 'Le dossier source et le dossier de destination ne peuvent pas être identiques.',
             "Le dossier de destination n'existe pas.", 'Enregistré', 'La configuration a été enregistrée avec succès.',
@@ -151,11 +159,11 @@ FRENCH = ['Non', 'Oui', 'Démarrer', 'Arrêter', 'ÉTAT', 'MINUTERIE', "Minuteri
 
 GERMAN = ['Nein', 'Ja', 'Starten', 'Halt', 'DER STATUS', 'DER TIMER', 'Wartezeit', 'Fortschritt:', 'Quellordner:',
            'Zielordner:', 'Protokolldateien\nöffnen', 'Hilfe', 'Info', 'Konfiguration\nspeichern', 'Sprache:',
-           'Anwendung starten\nausgeführt?', 'Sprache anwenden', 'Zeit bis zur\nnächsten Ausführung:', 'Schließen',
+           'Anwendung starten\nausgeführt?', 'Anwenden', 'Zeit bis zur\nnächsten Ausführung:', 'Schließen',
            '- ERFOLG: Datei verschoben', 'aus Ordner', 'in Ordner', '- FEHLER: Berechtigung für Datei verweigert',
            '- FEHLER: Datei', 'aus Ordner', 'wurde NICHT in Ordner verschoben',
            'weil die Datei bereits im Ziel vorhanden ist.', 'Über CDR File Organizer',
-           'Dies ist eine einfache Software zum Organisieren von Cisco CDR-Dateien nach Jahr, Monat und Tag.\n', 'Sprache anwenden',
+           'Dies ist eine einfache Software zum Organisieren von Cisco CDR-Dateien nach Jahr, Monat und Tag.\n', 'Anwenden',
            'Speichern Sie Ihre Konfiguration und starten Sie die Anwendung neu, damit die Änderungen wirksam werden.', 'Fehler',
            'Quellordner existiert nicht.', 'Fehler', 'Quellordner und Zielordner können nicht identisch sein.',
 		   'Zielordner existiert nicht.', 'Gespeichert', 'Die Konfiguration wurde erfolgreich gespeichert.',
@@ -454,13 +462,12 @@ class Ui_MainWindow(object):
         self.lcdNumber = QtWidgets.QLCDNumber(self.centralwidget)
         self.lcdNumber.setGeometry(QtCore.QRect(40, 490, 211, 111))
         self.lcdNumber.setObjectName("lcdNumber")
-        # self.lcdNumber.setProperty('value', 130)
 
         self.box_progressBar = QtWidgets.QProgressBar(self.centralwidget)
         self.box_progressBar.setGeometry(QtCore.QRect(460, 220, 351, 21))
         font = QtGui.QFont()
         font.setFamily("Arial")
-        font.setPointSize(14)
+        font.setPointSize(12)
         self.box_progressBar.setFont(font)
         # To edit the progress bar, edit the value below, example:
         # self.box_progressBar.setProperty("value", 24)
@@ -761,7 +768,11 @@ class Ui_MainWindow(object):
         os.system("start logs")
 
     def app_help(self):
-        os.system("start help.html")
+        if os.name == 'nt':
+            os.system("start help.html")
+        else:
+            pass
+            #xdg-open help.html
 
     def app_close(self):
         self.app_stop()
