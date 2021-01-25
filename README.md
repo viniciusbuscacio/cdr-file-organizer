@@ -1,7 +1,7 @@
 # cdr-file-organizer
 
 CDR File Organizer
-This is a simple software to organize Cisco CDR Files by Year, Month and day.
+This is a simple software to organize Cisco Call Manager CDR Files by Year, Month and day.
 
 HOW TO USE
 1) Select the source folders, where your CDR files are located.
